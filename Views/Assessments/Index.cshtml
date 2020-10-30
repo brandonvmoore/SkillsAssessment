@@ -2,41 +2,66 @@
 @model AssessmentModel
 
 <style>
+    /* Category menu*/
     nav li.active {
         font-weight: bold;
     }
+
+    /* Skill response circles */
+    .numberCircle {
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        padding: 8px;
+        margin: 2px;
+        background: #fff;
+        border: 2px solid #666;
+        border-color: lightgrey;
+        text-align: center;
+        line-height: 7px;
+    }
 </style>
+
+<partial name="modal" />
 
 <div class="row">
     <div class="col-lg-12 text-center h2">@Model.Title</div>
 </div>
 
-<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-        <ul id="categoryList" class="navbar-nav flex-grow-1">
-            <li class="nav-item border-right"><a href="#" class="nav-link text-dark">Intro Page</a></li>
-            <li class="divider"></li>
+<div class="row">
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 w-100">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+            <ul id="categoryList" class="navbar-nav flex-grow-1">
+                <li class="nav-item border-right"><a href="#" class="nav-link text-dark">Intro Page</a></li>
+                <li class="divider"></li>
 
-            @foreach (var c in Model.Categories)
-            {
-                <li class="nav-item" data-id="@c.Id" data-quote="@c.Quote"><a href="#" class="nav-link text-dark">@c.Title</a></li>
-            }
-        </ul>
-    </div>
-</nav>
-
+                @foreach (var c in Model.Categories)
+                {
+                    <li class="nav-item" data-id="@c.Id" data-quote="@c.Quote"><a href="#" class="nav-link text-dark">@c.Title</a></li>
+                }
+            </ul>
+        </div>
+    </nav>
+</div>
 
 <div class="row">
-    <div class="col-lg-2 pr-lg-0 border-right">
+
+    <div class="col-lg-2 pr-lg-0 pl-0 border-right">
+        <div class="text-center">
+            <a href="javascript:void(0);" 
+               type="button" style="font-size:smaller; width:96% !important;"
+               data-toggle="modal" data-target="#exampleModal"
+               class="d-block border shadow py-2 mb-2 text-center mx-auto text-decoration-none" >+ New Core Competency</a>
+        </div>
         <ul id="competencyList" class="list-group list-group-flush small"></ul>
     </div>
     <div class="col-lg-10 border">
         @*<div class="row my-lg-3">
-            <div class="col-lg-4">Leadership / Impact</div>
-        </div>*@
+                <div class="col-lg-4">Leadership / Impact</div>
+            </div>*@
 
         <div class="row my-lg-3">
             <div class="col-lg-6">
@@ -121,7 +146,7 @@
                 var selector = id > 0 ? `li[data-id="${id}"]` : "li:first";
                 $(selector, this.CompetencyList).addClass("active");
 
-                this.RefreshQuestion(); 
+                this.RefreshQuestion();
                 this.RefreshSkills();
             }
 

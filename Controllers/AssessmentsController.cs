@@ -51,5 +51,10 @@ namespace SkillsAssessment.Controllers
 
             return PartialView(model);
         }
+
+        public JsonResult AddCompetency(string competencyName)
+        {
+            return Json("Success");
+        }
     }
 }
