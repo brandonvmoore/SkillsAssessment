@@ -1,0 +1,151 @@
+﻿@using SkillsAssessment.Models
+@model AdminModel
+
+<style>
+    select {
+        flex-grow: 1;
+    }
+
+    .flexer {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    ol li {
+        list-style-type: none;
+    }
+</style>
+
+<div class="row">
+    <div class="col-lg-3">
+        <label for="CategoryDropdown" class="font-weight-bold">Category</label>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-3">
+        <ol class="card" id="CategoryList">
+            @foreach (var m in Model.Categories)
+            {
+                <li value="@m.SortOrder" data-id="@m.Id" data-quote="@m.Quote" draggable="true">@m.Title</li>
+            }
+        </ol>
+    </div>
+</div>
+<br />
+<hr />
+<br />
+<div class="row">
+    <div class="col-lg-3 flexer">
+        <select id="CategoryDropdown" name="@Html.NameFor(m => m.SelectedCategory)" class="form-control" size="5">
+            @foreach (var m in Model.Categories)
+            {
+                <option value="@m.Id" data-quote="@m.Quote">@m.Title</option>
+            }
+        </select>
+    </div>
+    <div class="col-lg-3">
+        <button class="btn btn-primary">Add new category...</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="px-3 py-2 m-3">
+        <span id="category-quote">@Model.SelectedCategory.Quote</span>
+    </div>
+</div>
+
+@*Core Competencies*@
+<div class="row">
+    <div class="col-lg-3">
+        <label for="CompetencyDropdown" class="font-weight-bold">Core Competency</label>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-3">
+        <select class="form-control" id="CompetencyDropdown" name="SelectedCompetency"></select>
+    </div>
+    <div class="col-lg-3">
+        <button class="btn btn-primary">Add new competency...</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="px-3 py-2 m-3">
+        <span id="competency-question"></span>
+    </div>
+</div>
+
+@section Scripts
+{
+    
+    <script>
+        // Drag and Drop
+        const categoryList = $("#CategoryList");
+        const categoryListItems = $("li", categoryList);
+        categoryListItems.attr("draggable", "true");
+
+        categoryListItems.on("dragstart", onDragStart);
+        categoryListItems.on("dragover", (ev) => ev.preventDefault());
+        categoryListItems.on("drop", onDrop);
+
+        function onDragStart(ev) {
+            ev.originalEvent.dataTransfer.setData("text", $(ev.target).attr('data-id'));
+            console.log("DragStart: " + this.textContent);
+        }
+
+        function onDrop(ev) {
+            var data = ev.originalEvent.dataTransfer.getData("text");
+            console.log("Drop:" + this.textContent + ", " + "Data: " + data);
+
+            // Make call to update list
+            //ev.target.appendChild(document.getElementById(data));
+        }
+    </script>
+
+    <script>
+        const categoryDD = $("#CategoryDropdown");
+        const competencyDD = $("#CompetencyDropdown");
+
+        competencyDD.change(onCompetencyChanged);
+        categoryDD.change(onCategoryChanged);
+
+        setCompetencies();
+
+        function onCategoryChanged() {
+            setQuote($("option:selected", categoryDD).attr('data-quote'));
+            setCompetencies();
+        }
+
+        function onCompetencyChanged() {
+            setCompetencyQuestion();
+        }
+
+        function setQuote(quote) {
+            $('#category-quote').text(quote);
+        }
+
+        function setCompetencyQuestion() {
+
+            //let selectedOption = $("option:selected", competencyDD);
+            //let selectedOptionText = selectedOption.text();
+            let question = $("option:selected", competencyDD).attr('data-question');
+            $('#competency-question').text(question);
+        }
+
+        function setCompetencies() {
+            const url = '@Url.Action("GetCompetencies", "Admin")';
+            let categoryId = categoryDD.val();
+            $.getJSON(url, { categoryId: categoryId }, function (response) {
+                competencyDD.empty();
+                $.each(response, function (index, item) {
+                    competencyDD.append($(`<option value="${item.id}" data-question="${item.question ?? ''}"></option>`).text(item.title));
+                });
+
+                competencyDD.val($("option:first", competencyDD).val());
+                setCompetencyQuestion();
+            });
+        }
+    </script>
+}

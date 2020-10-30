@@ -1,0 +1,153 @@
+﻿@using SkillsAssessment.Models
+@model AdminModel
+@*Categories*@
+<div class="row">
+    <div class="col-lg-3">
+        <label for="CategoryDropdown" class="font-weight-bold">Category</label>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-3">
+        <select id="CategoryDropdown" name="@Html.NameFor(m => m.SelectedCategory)" class="form-control">
+            @foreach (var m in Model.Categories)
+            {
+                <option value="@m.Id" data-quote="@m.Quote">@m.Title</option>
+            }
+        </select>
+    </div>
+    <div class="col-lg-3">
+        <button class="btn btn-primary">Add new category...</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="px-3 py-2 m-3">
+        <span id="category-quote">@Model.SelectedCategory.Quote</span>
+    </div>
+</div>
+
+@*Core Competencies*@
+<div class="row">
+    <div class="col-lg-3">
+        <label for="CompetencyDropdown" class="font-weight-bold">Core Competency</label>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-3">
+        <select class="form-control" id="CompetencyDropdown" name="SelectedCompetency"></select>
+    </div>
+    <div class="col-lg-3">
+        <button class="btn btn-primary">Add new competency...</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="px-3 py-2 m-3">
+        <span id="competency-question"></span>
+    </div>
+</div>
+
+@*Skills*@
+<div class="row pb-3">
+    <div class="col-lg-3 font-weight-bold">Skills</div>
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6">
+        <form class="float-lg-right">
+            <span class="pr-3 font-weight-bold">Scale</span>
+            
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="scale1" name="scale" value="1">
+                <label class="form-check-label" for="scale1">1</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="scale2" name="scale" value="2">
+                <label class="form-check-label" for="scale2">2</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="scale3" name="scale" value="3">
+                <label class="form-check-label" for="scale3">3</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="scale4" name="scale" value="4">
+                <label class="form-check-label" for="scale4">4</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="scale5" name="scale" value="5">
+                <label class="form-check-label" for="sacle5">5</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="scale6" name="scale" value="6">
+                <label class="form-check-label" for="scale6">6</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="scale7" name="scale" value="7">
+                <label class="form-check-label" for="scale7">7</label>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <ul id="skills" class="list-group-flush">
+        <li class="col-lg-12 list-group-item">Build things from scratch</li>
+        <li class="col-lg-12 list-group-item">Manage growing companies</li>
+        <li class="col-lg-12 list-group-item">Business Process Optimization</li>
+        <li class="col-lg-12 list-group-item">Governance, Risk & Compliance</li>
+        <li class="col-lg-12 list-group-item">Improve underperforming orgs</li>
+        <li class="col-lg-12 list-group-item">Get projects back on track</li>
+        <li class="col-lg-12 list-group-item">Maintain smooth running teams</li>
+        <li class="col-lg-12 list-group-item">Right-sizing/Down-sizing</li>
+        <li class="col-lg-12 list-group-item">M&A - selling</li>
+        <li class="col-lg-12 list-group-item">M&A - buying</li>
+        <li class="col-lg-12 list-group-item">Prep for IPO</li>
+    </ul>
+</div>
+
+@section Scripts
+{
+    <script>
+        var categoryDD = $("#CategoryDropdown");
+        var competencyDD = $("#CompetencyDropdown");
+
+        competencyDD.change(onCompetencyChanged);
+        categoryDD.change(onCategoryChanged);
+
+        setCompetencies();
+
+        function onCategoryChanged() {
+            setQuote($("option:selected", categoryDD).attr('data-quote'));
+            setCompetencies();
+        }
+
+        function onCompetencyChanged() {
+            setCompetencyQuestion();
+        }
+
+        function setQuote(quote) {
+            $('#category-quote').text(quote);
+        }
+
+        function setCompetencyQuestion() {
+
+            var selectedOption = $("option:selected", competencyDD);
+            var selectedOptionText = selectedOption.text();
+            var question = $("option:selected", competencyDD).attr('data-question');
+            $('#competency-question').text(question);
+        }
+
+        function setCompetencies(categoryId) {
+            var url = '@Url.Action("GetCompetencies", "Admin")';
+            var categoryId = categoryDD.val();
+            $.getJSON(url, { categoryId: categoryId }, function (response) {
+                competencyDD.empty();
+                $.each(response, function (index, item) {
+                    competencyDD.append($(`<option value="${item.id}" data-question="${item.question ?? ''}"></option>`).text(item.title));
+                });
+
+                competencyDD.val($("option:first", competencyDD).val());
+                setCompetencyQuestion();
+            });
+        }
+
+    </script>
+}

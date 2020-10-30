@@ -1,0 +1,11 @@
+﻿@model List<SkillModel>
+
+@foreach (var s in Model)
+{
+    <li class="col list-group-item">
+        <div class="row">
+            <div class="col-lg-8">@s.Text</div>
+            <div class="col-lg-4"><partial name="scale" /></div>
+        </div>
+    </li>
+}
