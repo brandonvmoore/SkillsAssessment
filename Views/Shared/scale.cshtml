@@ -1,15 +1,8 @@
 ﻿<div class="row align-items-center h-100">
     @for (int i = 1; i <= 7; i++)
     {
-        @*<div class="form-check form-check-inline">
-                <label>
-                    <input class="form-check-input" type="radio" id="scale@(i)" name="scale" value="@i">
-                    <span>@i</span>
-                </label>
-            </div>*@
-
         <div class="col-lg-1 pl-0 mr-3">
-            <a href="javascript:void(0)" style="text-decoration:none;"><div class="numberCircle">@i</div></a>
+            <a href="javascript:void(0)" style="text-decoration:none;"><div class="number-circle">@i</div></a>
         </div>
     }
 </div>

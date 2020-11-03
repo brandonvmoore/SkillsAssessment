@@ -1,47 +1,40 @@
 ﻿@model List<SkillModel>
-    <li class="col list-group-item">
-        <div class="row">
-            <div class="col-lg-8"></div>
-            <div class="col-lg-4">
-                <div class="row">
-                    <div class="col-lg-1  pl-0 mr-3"><span class="float-left">Low</span></div>
-                    <div class="col-lg-1  pl-0 mr-3"></div>
-                    <div class="col-lg-1  pl-0 mr-3"></div>
-                    <div class="col-lg-1  pl-0 mr-3"></div>
-                    <div class="col-lg-1  pl-0 mr-3"></div>
-                    <div class="col-lg-1  pl-0 mr-3"></div>
-                    <div class="col-lg-1  pl-0 mr-3"><span class="float-left">High</span></div>
-                </div>
-                
-                
-            </div>
+<li class="col list-group-item">
+    <div class="row">
+        <div class="col-lg-8"></div>
+        <div class="col-lg-4 pl-lg-0 pr-lg-4">
+            <span id="scaleLow" contenteditable="true" class="">Low</span>
+            <span id="scaleHigh" contenteditable="true" class="float-right text-lg-right">High</span>
         </div>
-
-        <div class="row">
-            <div class="col-lg-8">
-                <input type="text" class="form-control d-inline-block" style="width:80%;" />
-                <a type="button" href="javascript:void(0);"
-                   class="border shadow pt-2 pb-1 px-3 mb-2 text-center d-inline-block"
-                   style="font-size:smaller; text-decoration: none;">
-                    <i class="fas fa-plus"></i>
-                </a>
-            </div>
-
-            @*<div class="row m-lg-3">
-                <a href="javascript:void(0);" class="border shadow py-2 px-3 mb-2 text-center" type="button" style="font-size:smaller;">+ Add New Skill</a>
-            </div>*@
-
-
-            <div class="col-lg-4"><partial name="scale" /></div>
-        </div>
-    </li>
+    </div>
+</li>
 
 @foreach (var s in Model)
 {
     <li class="col list-group-item">
         <div class="row">
-            <div class="col-lg-8">@s.Text</div>
+            <div class="col-lg-8 pl-lg-3">
+                <a href="javascript:void(0);"><i class="eye-toggle far fa-eye pr-lg-3"></i></a> @s.Text
+            </div>
             <div class="col-lg-4"><partial name="scale" /></div>
         </div>
     </li>
 }
+
+<li class="col list-group-item">
+    <div class="row">
+        <div class="col-lg-8 overflow-hidden h-auto py-lg-1">
+            <div class="float-right  mt-lg-1 ml-lg-2">
+                <a id="addSkillLink" type="button" href="#"
+                   class="border shadow text-center px-lg-3 py-lg-2"
+                   style="font-size:smaller; text-decoration: none;">
+                    <i class="fas fa-plus"></i>
+                </a>
+            </div>
+
+            <div class="overflow-hidden">
+                <input id="newSkillNameInput" type="text" class="form-control" />
+            </div>
+        </div>
+    </div>
+</li>

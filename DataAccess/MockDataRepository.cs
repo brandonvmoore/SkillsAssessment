@@ -41,15 +41,31 @@ namespace SkillsAssessment.DataAccess
             return id;
         }
 
-        public void AddCompetency(string title, string description, int categoryId)
+        public void AddCompetency(int categoryId, string title, string question = null)
         {
             var category = CategoryList.FirstOrDefault(o => o.Id == categoryId);
 
             if (category != null)
             {
                 int id = category.Competencies.Select(o => o.Id).DefaultIfEmpty().Max() + 1;
-                category.Competencies.Add(new CompetencyModel() { Id = id, Title = title, Question = description });
+                category.Competencies.Add(new CompetencyModel() { Id = id, Title = title, Question = question });
             }
+        }
+
+        public void UpdateSkillQuestion(int categoryId, int competencyId, string newQuestion)
+        {
+            var category = CategoryList.FirstOrDefault(o => o.Id == categoryId);
+            var competency = category.Competencies.FirstOrDefault(o => o.Id == competencyId);
+            competency.Question = newQuestion;
+        }
+
+        public void AddSkill(int categoryId, int competencyId, string skillText)
+        {
+            var category = CategoryList.FirstOrDefault(o => o.Id == categoryId);
+            var competency = category.Competencies.FirstOrDefault(o => o.Id == competencyId);
+            IEnumerable<int> topId = competency.Skills?.Select(o => o.Id).DefaultIfEmpty();
+            int id = (topId ?? new List<int>()).Max() + 1;
+            competency.Skills.Add(new SkillModel() { Id = id, Text = skillText });
         }
     
         public static void SaveToXml()

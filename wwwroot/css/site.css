@@ -69,3 +69,23 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+/* Category menu*/
+nav #categoryList li.active {
+    font-weight: bold;
+}
+
+/* Circle numbers (for responding to skill questions)
+-------------------------------------------------- */
+/*#skillList .number-circle {
+    border-radius: 50% !important;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 8px !important;
+    margin: 2px !important;
+    background: #fff !important;
+    border: 2px solid #666 !important;
+    border-color: lightgrey !important;
+    text-align: center !important;
+    line-height: 7px !important;
+}*/

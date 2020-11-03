@@ -33,14 +33,14 @@ namespace SkillsAssessment.Controllers
             return Json(competency.Skills);
         }
 
-        [EnableCors]
+        [HttpPost]
         public PartialViewResult CompetenciesListPartial(int assessmentId, int categoryId)
         {
             var model = repo.GetCompetencyModels(categoryId);
             return PartialView(model);
         }
 
-        [EnableCors]
+        [HttpPost]
         public PartialViewResult SkillsListPartial(int assessmentId, int categoryId, int competencyId)
         {
             if (competencyId == 0)
@@ -52,8 +52,27 @@ namespace SkillsAssessment.Controllers
             return PartialView(model);
         }
 
-        public JsonResult AddCompetency(string competencyName)
+        [HttpPost]
+        public JsonResult AddCompetency(int categoryId, string competencyName)
         {
+            repo.AddCompetency(categoryId, competencyName);
+            MockDataRepository.SaveToXml();
+            return Json("Success");
+        }
+
+        [HttpPost]
+        public JsonResult AddSkill(int categoryId, int competencyId, string skillText)
+        {
+            repo.AddSkill(categoryId, competencyId, skillText);
+            MockDataRepository.SaveToXml();
+            return Json("Success");
+        }
+
+        [HttpPost]
+        public JsonResult UpdateSkillQuestion(int categoryId, int competencyId, string newQuestion)
+        {
+            repo.UpdateSkillQuestion(categoryId, competencyId, newQuestion);
+            MockDataRepository.SaveToXml();
             return Json("Success");
         }
     }

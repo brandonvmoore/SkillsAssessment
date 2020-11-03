@@ -27,8 +27,11 @@
         $('#modalSaveButton').click(function () {
             ajax({
                 url: "@Url.Action("AddCompetency","Assessments")",
-                data: { competencyName: $("#modalInput").val() },
-                success: (data) => alert(data),
+                // Update add data-categoryId to li for competency and use that instead of am.ActiveCategoryId
+                data: { categoryId: am.ActiveCategoryId, competencyName: $("#modalInput").val() },
+                success: (data) => {
+                    alert(data);
+                },
                 type: "POST",
                 error: function (a, b, c) {
                     debugger;
