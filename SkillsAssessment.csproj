@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Domain\" />
+    <ProjectReference Include="..\SkillsDataAccess\SkillsDataAccess.csproj" />
   </ItemGroup>
 
 </Project>

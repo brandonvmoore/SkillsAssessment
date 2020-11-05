@@ -1,21 +1,28 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SkillsDataAccess;
 
 namespace SkillsAssessment
 {
     public class Startup
     {
+        // TO DO: Do this through injection
+        public static string SkillsCxnString;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            SkillsCxnString = Configuration.GetConnectionString("SkillsConnectionString");
         }
 
         public IConfiguration Configuration { get; }
@@ -27,10 +34,11 @@ namespace SkillsAssessment
                 .AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
 
+            services.AddDbContext<AppDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("SkillsConnectionString")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AppDbContext db)
         {
             if (env.IsDevelopment())
             {
@@ -42,6 +50,9 @@ namespace SkillsAssessment
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            db.Database.EnsureCreated();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             

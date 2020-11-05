@@ -21,6 +21,12 @@ namespace SkillsAssessment.Controllers
             return View(model);
         }
 
+        //public IActionResult Index(int assessmentId)
+        //{
+        //    var model = new AssessmentModel();
+            
+        //}
+
         public JsonResult GetCompetencies(int assessmentId, int categoryId)
         {
             var competencies = repo.GetCompetencyModels(categoryId);

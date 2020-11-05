@@ -16,6 +16,12 @@ namespace SkillsAssessment.DataAccess
         }
 
         static List<CategoryModel> CategoryList = new List<CategoryModel>();
+        
+        public void GetAssessment(int assessmentId)
+        {
+
+        }
+
         public IEnumerable<CategoryModel> GetCategoryModels()
         {
             return CategoryList;
@@ -63,9 +69,35 @@ namespace SkillsAssessment.DataAccess
         {
             var category = CategoryList.FirstOrDefault(o => o.Id == categoryId);
             var competency = category.Competencies.FirstOrDefault(o => o.Id == competencyId);
+
             IEnumerable<int> topId = competency.Skills?.Select(o => o.Id).DefaultIfEmpty();
             int id = (topId ?? new List<int>()).Max() + 1;
             competency.Skills.Add(new SkillModel() { Id = id, Text = skillText });
+        }
+
+        public void DeleteCompetency(int categoryId, int competencyId)
+        {
+            var category = CategoryList.FirstOrDefault(o => o.Id == categoryId);
+            var competency = category.Competencies.FirstOrDefault(o => o.Id == competencyId);
+
+            if (competency == null)
+                return;
+
+            category.Competencies.Remove(competency);
+        }
+
+        public void DeleteSkill(int categoryId, int competencyId, int skillId)
+        {
+            var category = CategoryList.FirstOrDefault(o => o.Id == categoryId);
+            var competency = category.Competencies.FirstOrDefault(o => o.Id == competencyId);
+
+            if (competency == null)
+                return;
+
+            var skill = competency.Skills.FirstOrDefault(o => o.Id == skillId);
+
+            if (skill != null)
+                competency.Skills.Remove(skill);
         }
     
         public static void SaveToXml()

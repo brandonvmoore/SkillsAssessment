@@ -4,8 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SkillsAssessment.Models;
+using SkillsDataAccess;
+using SkillsDataAccess.Domain;
 
 namespace SkillsAssessment.Controllers
 {
@@ -20,6 +23,16 @@ namespace SkillsAssessment.Controllers
 
         public IActionResult Index()
         {
+            var o = new DbContextOptionsBuilder<AppDbContext>();
+            o.UseSqlServer(Startup.SkillsCxnString);
+            AppDbContext ctx = new AppDbContext(o.Options);
+
+            ctx.Assessments.Add(new Assessment()
+            {
+                Title = "Sales Assessment",
+                Categories = new List<AssessmentCategory>() { new AssessmentCategory() { Title = "Test Category"} }
+            });
+            ctx.SaveChanges();
             return View();
         }
 

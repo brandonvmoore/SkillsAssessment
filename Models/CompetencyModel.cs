@@ -11,8 +11,9 @@ namespace SkillsAssessment.Models
         public string Title { get; set; }
         public string Question { get; set; }
         public List<SkillModel> Skills { get; set; }
-        public bool AutoIncludeOnNewAssessments { get; set; }
+        public bool IsActive { get; set; }
         public string ScaleLowDescription { get; set; }
         public string ScaleHighDescription { get; set; }
+        public int SortOrder { get; set; }
     }
 }
