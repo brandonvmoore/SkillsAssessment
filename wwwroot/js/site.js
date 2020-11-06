@@ -1,17 +1,11 @@
 ﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
 
-// Write your JavaScript code.
-
 // Ajax helper functions
 function ajax(settings) {
     var processing = false;
 
     if (!settings.url) throw 'No url was specified';
-    if (!settings.success) throw 'No success method was specified';
-
-    if (!settings.error && typeof ShowError === 'undefined')
-        var ShowError = function (jqXHR, textStatus, errorThrown) { debugger; };
 
     var url = settings.url; //resolveUrl(settings.url);
     var cache = settings.cache || false;
@@ -19,7 +13,7 @@ function ajax(settings) {
     var contentType = settings.contentType || 'application/x-www-form-urlencoded; charset=UTF-8'; //application/json; charset=utf-8';
     var type = settings.type || 'GET';
     var success = settings.success;
-    var error = settings.error || ShowError;
+    var error = settings.error || ((jqXHR, textStatus, errorThrown) => { debugger; });
 
     var beforeSend = settings.beforeSend ||
         function () {

@@ -20,7 +20,6 @@
     </div>
 </div>
 
-
 <script>
     docReady(() => {
         $("#exampleModal").on('hide.bs.modal', clearInputs);
@@ -29,14 +28,7 @@
                 url: "@Url.Action("AddCompetency","Assessments")",
                 // Update add data-categoryId to li for competency and use that instead of am.ActiveCategoryId
                 data: { categoryId: am.ActiveCategoryId, competencyName: $("#modalInput").val() },
-                success: (data) => {
-                    alert(data);
-                },
-                type: "POST",
-                error: function (a, b, c) {
-                    debugger;
-                }
-
+                type: "POST"
             })
         });
 

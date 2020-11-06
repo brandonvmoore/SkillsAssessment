@@ -1,0 +1,131 @@
+﻿@model AssessmentModel
+
+    <script>
+        class AssessmentModel {
+            constructor() {
+                this.AssessmentId = '@Model.Id';
+                this.CategoryHeading = $("#categoryHeading");
+                this.CompetencyHeading = $("#competencyHeading");
+                this.CategoryList = $("#categoryList");
+                this.CompetencyList = $("#competencyList");
+                this.SkillList = $('#skillList');
+                this.Question = $('#skillQuestion');
+
+                this.ActiveCategory = () => $("li.active", this.CategoryList);
+                this.ActiveCompetency = () => $("li.active", this.CompetencyList);
+                this.ActiveCategoryId = () => this.ActiveCategory().attr("data-id");
+                this.ActiveCompetencyId = () => this.ActiveCompetency().attr("data-id");
+                this.ActiveCompetencyQuestion = () => this.ActiveCompetency().attr("data-question");
+
+                this.Urls = {
+                    CompetenciesListPartial: '@Url.Action("CompetenciesListPartial", "Assessments")',
+                    SkillsListPartial: '@Url.Action("SkillsListPartial", "Assessments")'
+                };
+
+                this.SetActiveCategory();
+
+                // attach CategoryList click handler
+                $("li[data-id]", this.CategoryList).click(this.onCategoryClicked);
+
+                // popup modal to enter new core competency
+                $("#addCompetencyLink").click(() => $('#exampleModal').modal("toggle"));
+
+                this.Question.blur(this.onQuestionUpdated);
+            }
+
+            UpdateQuestion() {
+                var x = this.Question.val();
+
+                if (this.Question.data('originalValue') == this.Question.val())
+                    return;
+
+                ajax({
+                    url: "@Url.Action("UpdateSkillQuestion","Assessments")",
+                    data: {
+                        categoryId: am.ActiveCategoryId,
+                        competencyId: am.ActiveCompetencyId,
+                        newQuestion: this.Question.val()
+                    },
+                    success: (data) => this.ActiveCompetency().attr("data-question", this.Question.val()),
+                    type: "POST"
+                });
+            }
+
+            RefreshCompetencies() {
+                showPartialView({
+                    url: this.Urls.CompetenciesListPartial,
+                    data: { assessmentId: this.AssessmentId, categoryId: this.ActiveCategoryId() },
+                    target: this.CompetencyList,
+                    success: () => {
+                        this.SetActiveCompetency();
+
+                        //attach CompetencyList click handler
+                        $("li[data-id]", this.CompetencyList).click(this.onCompetencyClicked);
+
+                        // Wire up eye icon events
+                        $("i.eye-toggle", this.CompetencyList).click((ev) => {
+                            event.stopPropagation(); // don't bubble up to select competency
+                            $(ev.target).toggleClass("fa-eye fa-eye-slash");
+                        });
+
+                        this.RefreshSkills();
+                    }
+                });
+            }
+
+            RefreshSkills() {
+                showPartialView({
+                    url: this.Urls.SkillsListPartial,
+                    data: { assessmentId: this.AssessmentId, categoryId: this.ActiveCategoryId(), competencyId: this.ActiveCompetencyId() },
+                    target: this.SkillList,
+                    success: () => {
+                        $("i.eye-toggle", this.SkillList).click((ev) => {
+                            $(ev.target).toggleClass("fa-eye fa-eye-slash");
+                        });
+
+                        // add handler for creating new skills
+                        $('#addSkillLink').click(function () {
+                            ajax({
+                                url: "@Url.Action("AddSkill", "Assessments")",
+                                // Update add data-categoryId to li for competency and use that instead of am.ActiveCategoryId
+                                data: {
+                                    categoryId: am.ActiveCategoryId(),
+                                    competencyId: am.ActiveCompetencyId(),
+                                    skillText: $("#newSkillNameInput").val()
+                                },
+                                type: "POST"
+                            });
+                        });
+                    }
+                });
+            }
+
+            SetActiveCategory(id) {
+                var selector = id > 0 ? `li[data-id="${id}"]` : "li[data-id]:first";
+                $('li[data-id]', this.CategoryList).removeClass("active");
+                $(selector, this.CategoryList).addClass("active");
+                this.CategoryHeading.text(this.ActiveCategory().text());
+                this.RefreshCompetencies();
+            }
+
+            // Pass in a competencyId to select, or omit parameter to select 1st one
+            SetActiveCompetency(id) {
+                $('li[data-id]', this.CompetencyList).removeClass("active");
+
+                var selector = id > 0 ? `li[data-id="${id}"]` : "li:first";
+                $(selector, this.CompetencyList).addClass("active");
+
+                this.CompetencyHeading.text(this.ActiveCompetency().text());
+                this.RefreshQuestion();
+                this.RefreshSkills();
+            }
+
+            RefreshQuestion() { this.Question.val(this.ActiveCompetencyQuestion()); }
+
+            onQuestionUpdated = (ev) => this.UpdateQuestion();
+            onCategoryClicked = (ev) => this.SetActiveCategory($(ev.currentTarget).attr('data-id'));
+            onCompetencyClicked = (ev) => this.SetActiveCompetency($(ev.currentTarget).attr('data-id'));
+        }
+
+        var am = new AssessmentModel();
+    </script>

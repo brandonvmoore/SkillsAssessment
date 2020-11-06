@@ -46,7 +46,7 @@ namespace SkillsAssessment.DataAccess
 
         public void AddCompetency(int categoryId, string title, string question = null)
         {
-            var category = dbc.AssessmentCategories.First(o => o.Id == categoryId);
+            var category = dbc.AssessmentCategories.Include(o => o.Competencies).First(o => o.Id == categoryId);
             category.Competencies.Add(new AssessmentCompetency { Title = title, Question = question });
             dbc.SaveChanges();
         }
