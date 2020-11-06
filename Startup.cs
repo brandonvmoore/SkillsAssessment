@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SkillsAssessment.DataAccess;
 using SkillsDataAccess;
 
 namespace SkillsAssessment
@@ -34,7 +35,10 @@ namespace SkillsAssessment
                 .AddControllersWithViews()
                 .AddRazorRuntimeCompilation();
 
-            services.AddDbContext<AppDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("SkillsConnectionString")));
+            services.AddDbContext<AppDbContext>(o =>
+                o.UseSqlServer(Configuration.GetConnectionString("SkillsConnectionString")));
+
+            services.AddScoped<SqlRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

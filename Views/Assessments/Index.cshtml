@@ -93,6 +93,7 @@
     <script>
         class AssessmentModel {
             constructor() {
+                this.AssessmentId = '@Model.Id';
                 this.CategoryHeading = $("#categoryHeading");
                 this.CompetencyHeading = $("#competencyHeading");
                 this.CategoryList = $("#categoryList");
@@ -152,7 +153,7 @@
             RefreshCompetencies() {
                 showPartialView({
                     url: this.Urls.CompetenciesListPartial,
-                        data: { assessmentId: 1, categoryId: this.ActiveCategoryId() },
+                        data: { assessmentId: this.AssessmentId, categoryId: this.ActiveCategoryId() },
                     target: this.CompetencyList,
                     success: () => {
                         this.SetActiveCompetency();
@@ -174,7 +175,7 @@
             RefreshSkills() {
                 showPartialView({
                     url: this.Urls.SkillsListPartial,
-                    data: { assessmentId: 1, categoryId: this.ActiveCategoryId(), competencyId: this.ActiveCompetencyId() },
+                    data: { assessmentId: this.AssessmentId, categoryId: this.ActiveCategoryId(), competencyId: this.ActiveCompetencyId() },
                     target: this.SkillList,
                     success: () => {
                         $("i.eye-toggle", this.SkillList).click((ev) => {

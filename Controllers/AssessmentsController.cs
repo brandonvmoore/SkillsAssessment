@@ -6,43 +6,47 @@ using Microsoft.AspNetCore.Mvc;
 using SkillsAssessment.Models;
 using SkillsAssessment.DataAccess;
 using Microsoft.AspNetCore.Cors;
+using SkillsDataAccess;
+using Microsoft.EntityFrameworkCore;
+using Omu.ValueInjecter;
 
 namespace SkillsAssessment.Controllers
 {
     public class AssessmentsController : Controller
     {
-        MockDataRepository repo = new MockDataRepository();
+        readonly SqlRepository sqlRepo;
+
+        public AssessmentsController(SqlRepository sqlRepository)
+        {
+            sqlRepo = sqlRepository;
+        }
 
         public IActionResult Index()
         {
-            var model = new AssessmentModel();
-            model.Title = "Sales Assessment";
-            model.Categories = repo.GetAssessmentCategories();
+            var model = new AssessmentModel(sqlRepo.GetAssessment(10));
             return View(model);
         }
 
-        //public IActionResult Index(int assessmentId)
-        //{
-        //    var model = new AssessmentModel();
-            
-        //}
-
         public JsonResult GetCompetencies(int assessmentId, int categoryId)
         {
-            var competencies = repo.GetCompetencyModels(categoryId);
-            return Json(competencies);
+            var comps = sqlRepo.GetCompetencies(categoryId, assessmentId);
+            var compModels = comps.Select(o => new CompetencyModel(o));
+
+            return Json(compModels);
         }
 
         public JsonResult GetSkills(int assessmentId, int categoryId, int competencyId)
         {
-            var competency = repo.GetCompetencyModels(categoryId).FirstOrDefault(o => o.Id == competencyId);
-            return Json(competency.Skills);
+            var comp = sqlRepo.GetCompetencies(categoryId, assessmentId).Single(o => o.Id == competencyId);
+            var skillModels = comp.Skills.Select(o => new SkillModel(o));
+
+            return Json(skillModels);
         }
 
         [HttpPost]
         public PartialViewResult CompetenciesListPartial(int assessmentId, int categoryId)
         {
-            var model = repo.GetCompetencyModels(categoryId);
+            var model = sqlRepo.GetCompetencies(categoryId, assessmentId).Select(o => new CompetencyModel(o)).ToList();
             return PartialView(model);
         }
 
@@ -52,8 +56,9 @@ namespace SkillsAssessment.Controllers
             if (competencyId == 0)
                 return PartialView(new List<SkillModel>());
 
-            var competency = repo.GetCompetencyModels(categoryId).FirstOrDefault(o => o.Id == competencyId);
-            var model = competency.Skills ?? new List<SkillModel>();
+            var competency = sqlRepo.GetCompetencies(categoryId, assessmentId).FirstOrDefault(o => o.Id == competencyId);
+            var skills = competency.Skills.Select(o => new SkillModel(o)).ToList();
+            var model = skills ?? new List<SkillModel>();
 
             return PartialView(model);
         }
@@ -61,24 +66,21 @@ namespace SkillsAssessment.Controllers
         [HttpPost]
         public JsonResult AddCompetency(int categoryId, string competencyName)
         {
-            repo.AddCompetency(categoryId, competencyName);
-            MockDataRepository.SaveToXml();
+            sqlRepo.AddCompetency(categoryId, competencyName);
             return Json("Success");
         }
 
         [HttpPost]
         public JsonResult AddSkill(int categoryId, int competencyId, string skillText)
         {
-            repo.AddSkill(categoryId, competencyId, skillText);
-            MockDataRepository.SaveToXml();
+            sqlRepo.AddSkill(categoryId, competencyId, skillText);
             return Json("Success");
         }
 
         [HttpPost]
         public JsonResult UpdateSkillQuestion(int categoryId, int competencyId, string newQuestion)
         {
-            repo.UpdateSkillQuestion(categoryId, competencyId, newQuestion);
-            MockDataRepository.SaveToXml();
+            sqlRepo.UpdateSkillQuestion(categoryId, competencyId, newQuestion);
             return Json("Success");
         }
     }

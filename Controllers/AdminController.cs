@@ -10,32 +10,24 @@ namespace SkillsAssessment.Controllers
 {
     public class AdminController : Controller
     {
-        MockDataRepository repo = new MockDataRepository();
-
         public IActionResult Index()
         {
             // TODO: Add DI and refactor
-            var model = new AdminModel(repo.GetCategoryModels());
+            AdminModel model = null; // new AdminModel(repo.GetCategoryModels());
 
             return View(model);
         }
 
         public IActionResult Categories()
         {
-            var model = new AdminModel(repo.GetCategoryModels());
+            AdminModel model = null; // new AdminModel(repo.GetCategoryModels());
             return View(model);
         }
 
         public JsonResult GetCompetencies(int categoryId)
         {
-            var competencies = repo.GetCompetencyModels(categoryId);
+            IEnumerable<CompetencyModel> competencies = null; // repo.GetCompetencyModels(categoryId);
             return Json(competencies);
-        }
-
-        [HttpPost]
-        public JsonResult AddCategory(CategoryModel model)
-        {
-            return Json(new { id = repo.AddCategory(model.Title, model.Quote) });
         }
     }
 }
